@@ -1,0 +1,292 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>MMP310_final</title>
+
+  <!-- style sheet -->
+  <link rel="stylesheet" href="CSS/foundation.css">
+  <link rel="stylesheet" href="CSS/layout.css">
+
+    <!-- JQUERY -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+  <!-- BOOTSTRAP -->
+<!--   <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"> -->
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+  <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+  <!-- FONT AWESOME -->
+  <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+    <!-- Parse -->
+  <script src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      Parse.initialize("M0zFKQIxLDSMNvVK7nagMdF3kTA8WLRSi3mdTZn1", "GqcBEpoNy6ukqV1h2ftSWhhC3QoU2CQqJafILwOe");
+
+      var MyComment = Parse.Object.extend("MyComment");
+      var MyCommentReply = Parse.Object.extend("MyCommentReply");
+
+      $('#buttonAddEntry').on('click',function(e){
+        e.preventDefault();
+        var aComment = $('.form-control').val();
+        if (aComment==""){
+          alert("Please enter your comment");
+        }else{
+              // Create a new instance of that class.
+              var mycomment = new MyComment();
+
+              mycomment.set("comment", aComment);
+
+              mycomment.save(null, {
+                success: function(mycomment) {
+                  // Execute any logic that should take place after the object is saved.
+                  getAllComments();
+                },//End success: function(mycomment){
+                error: function(comment, error) {
+                  // Execute any logic that should take place if the save fails.
+                  // error is a Parse.Error with an error code and description.
+                  alert('Failed to create new object, with error code: ' + error.description);
+                }//error: function(comment, error){
+              });//End mycomment.save
+        }//End else
+      });//End $('#buttonAddEntry').on('click',function(e){
+
+
+
+
+      function getAllComments(){
+        $("#messages").empty();
+        var query = new Parse.Query(MyComment);
+        query.find({
+          success:function(comments){
+            for (var i=0;i<comments.length;i++){
+
+
+              var myReplies = $('<div>').attr('data-commentId',comments[i].id);
+
+              var queryReply = new Parse.Query(MyCommentReply);
+              queryReply.equalTo('MyComment',comments[i]);
+              queryReply.find({
+              success:function(replies){
+                for(var k=0;k<replies.length;k++){
+                  //$('div[data-commentId="'+replies[k].get('MyComment')+'"]')
+                  myReplies.append($('<div>').append(replies[k].get('reply')))
+                }
+              }
+            });
+            console.log('here');
+            var myButton = $('<button>').append('Reply').data('commentObject',comments[i]).on('click', function(e){
+              e.preventDefault();
+              var commentObject = $(this).data('commentObject');
+              var reply = $(this).siblings('textarea').val();
+              console.log(commentObject.id);
+              console.log(reply);
+               var mycommentReply = new MyCommentReply();
+
+                mycommentReply.set("MyComment", commentObject);
+                mycommentReply.set("reply", reply);
+
+                mycommentReply.save(null, {
+                  success: function(mycomment) {
+                    // Execute any logic that should take place after the object is saved.
+                    getAllComments();
+                  },//End success: function(mycomment){
+                  error: function(comment, error) {
+                    // Execute any logic that should take place if the save fails.
+                    // error is a Parse.Error with an error code and description.
+                    alert('Failed to create new object, with error code: ' + error.description);
+                  }//error: function(comment, error){
+                });//End mycomment.save
+            });
+
+            var myTA = $('<textarea>');
+            var myP = $('<p>').append(comments[i].get('comment'));
+            var myImg = $('<div>').addClass('large-2 columns small-3').append('<img src="http://placehold.it/80x80&text=[img]" />');
+            var myBody = $('<div>').addClass('large-10 columns').append(myP).append(myTA).append(myButton).append(myReplies);
+            var myRow = $('<div>').addClass('row').addClass('userComment').append(myImg).append(myBody);
+            $("#messages").append(myRow);
+          }// End for Loop
+        },//End success:function(comments){
+        error:function(){}
+      });//End query.find
+
+    }//End function getAllComments(){
+    getAllComments();
+
+      // Uploading Data
+      // function uploadComment(){
+
+      //    aComment.set("score", 1337);
+      //    aComment.set("playerName", "Sean Plott");
+      //    aComment.set("cheatMode", false);
+      //    aComment.set("skills", ["pwnage", "flying"]);
+      //    ///Put new info to arrey again//
+      //    aComment.addUnique("skills", "kungfu");
+
+      //    aComment.save(null, {
+      //      success: function(aComment) {
+      //        // Now let's update it with some new data. In this case, only cheatMode and score
+      //        // will get sent to the cloud. playerName hasn't changed.
+      //        aComment.set("cheatMode", true);
+      //        aComment.set("score", 1338);
+
+      //        aComment.save();
+      //      }
+      //   });
+      // }
+
+    });//End   $(document).ready(function(){
+  </script>
+
+</head>
+
+<body>
+      <!-- Header and Nav -->
+  <div class="row">
+    <div class="large-12 columns">
+      <div class="panel">
+        <h1>Feed Template</h1>
+      </div>
+    </div>
+  </div>
+  <!-- End Header and Nav -->
+  <div class="row">
+ <!-- Nav Sidebar -->
+    <!-- This is source ordered to be pulled to the left on larger screens -->
+    <div id="leftSideBar" class="large-3 columns ">
+      <div class="panel">
+        <a href="#"><img src="http://placehold.it/150x120&text=[img]" /></a>
+        <h5><a href="#">Your Name</a></h5>
+          <div class="section-container vertical-nav" data-section data-options="deep_linking: false; one_up: true">
+          <section class="section">
+            <h5 class="title"><a href="#">Section 1</a></h5>
+          </section>
+          <section class="section">
+            <h5 class="title"><a href="#">Section 2</a></h5>
+          </section>
+          <section class="section">
+            <h5 class="title"><a href="#">Section 3</a></h5>
+          </section>
+          <section class="section">
+            <h5 class="title"><a href="#">Section 4</a></h5>
+          </section>
+          <section class="section">
+            <h5 class="title"><a href="#">Section 5</a></h5>
+          </section>
+          <section class="section">
+            <h5 class="title"><a href="#">Section 6</a></h5>
+          </section>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Main Feed -->
+    <!-- This has been source ordered to come first in the markup (and on small devices) but to be to the right of the nav on larger screens -->
+    <div id="center" class="large-6 columns">
+      <div class="row">
+        <textarea id ="YourCommentArea" class="form-control"></textarea>
+        <button id="buttonAddEntry" class="btn btn-success">Add</button>
+      </div>
+      <hr class="betTextAreaAndComment">
+      <div id="messages">
+      <!-- Feed Entry -->
+        <div class="row userComment">
+          <div class="large-2 columns small-3"><img src="http://placehold.it/80x80&text=[img]" /></div>
+          <div class="large-10 columns">
+            <p><strong>Some Person said:</strong> Bacon ipsum dolor sit amet nulla ham qui sint exercitation eiusmod commodo, chuck duis velit. Aute in reprehenderit, dolore aliqua non est magna in labore pig pork biltong.</p>
+            <ul class="inline-list">
+              <li><a href="">Reply</a></li>
+              <li><a href="">Share</a></li>
+            </ul>
+
+
+            <h6>2 Comments</h6>
+            <div class="row">
+              <div class="large-2 columns small-3"><img src="http://placehold.it/50x50&text=[img]" /></div>
+              <div class="large-10 columns"><p>Bacon ipsum dolor sit amet nulla ham qui sint exercitation eiusmod commodo, chuck duis velit. Aute in reprehenderit</p></div>
+            </div>
+            <div class="row">
+              <div class="large-2 columns small-3"><img src="http://placehold.it/50x50&text=[img]" /></div>
+              <div class="large-10 columns"><p>Bacon ipsum dolor sit amet nulla ham qui sint exercitation eiusmod commodo, chuck duis velit. Aute in reprehenderit</p></div>
+            </div>
+          </div>
+        </div>
+        <!-- End Feed Entry -->
+
+        <hr />
+
+        <!-- Feed Entry -->
+        <div class="row">
+          <div class="large-2 columns small-3"><img src="http://placehold.it/80x80&text=[img]" /></div>
+          <div class="large-10 columns">
+            <p><strong>Some Person said:</strong> Bacon ipsum dolor sit amet nulla ham qui sint exercitation eiusmod commodo, chuck duis velit. Aute in reprehenderit, dolore aliqua non est magna in labore pig pork biltong.</p>
+            <ul class="inline-list">
+              <li><a href="">Reply</a></li>
+              <li><a href="">Share</a></li>
+            </ul>
+          </div>
+        </div>
+        <!-- End Feed Entry -->
+
+        <hr />
+
+        <!-- Feed Entry -->
+        <div class="row">
+          <div class="large-2 columns small-3"><img src="http://placehold.it/80x80&text=[img]" /></div>
+          <div class="large-10 columns">
+            <p><strong>Some Person said:</strong> Bacon ipsum dolor sit amet nulla ham qui sint exercitation eiusmod commodo, chuck duis velit. Aute in reprehenderit, dolore aliqua non est magna in labore pig pork biltong.</p>
+            <ul class="inline-list">
+              <li><a href="">Reply</a></li>
+              <li><a href="">Share</a></li>
+            </ul>
+
+
+            <h6>2 Comments</h6>
+            <div class="row">
+              <div class="large-2 columns small-3"><img src="http://placehold.it/50x50&text=[img]" /></div>
+              <div class="large-10 columns"><p>Bacon ipsum dolor sit amet nulla ham qui sint exercitation eiusmod commodo, chuck duis velit. Aute in reprehenderit</p></div>
+            </div>
+          </div>
+        </div>
+        <!-- End Feed Entry -->
+      </div><!-- End #messages -->
+
+    </div><!-- End #center -->
+
+    <!-- Right Sidebar -->
+    <!-- On small devices this column is hidden -->
+    <aside id="rightSideBar" class="large-3 columns hide-for-small">
+      <p><img src="http://placehold.it/300x440&text=[ad]" /></p>
+      <p><img src="http://placehold.it/300x440&text=[ad]" /></p>
+    </aside>
+
+  </div>
+
+
+  <!-- Footer -->
+
+  <footer class="row">
+    <div class="large-12 columns">
+      <hr />
+      <div class="row">
+        <div class="large-5 columns">
+          <p>© Copyright no one at all. Go to town.</p>
+        </div>
+        <div class="large-7 columns">
+          <ul class="inline-list right">
+            <li><a href="#">Section 1</a></li>
+            <li><a href="#">Section 2</a></li>
+            <li><a href="#">Section 3</a></li>
+            <li><a href="#">Section 4</a></li>
+            <li><a href="#">Section 5</a></li>
+            <li><a href="#">Section 6</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

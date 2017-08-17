@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+
+	<!-- JQUERY -->
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+	<!-- PARSE -->
+	<script src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
+
+	<script>
+		$(document).ready(function(){
+		Parse.initialize("M0zFKQIxLDSMNvVK7nagMdF3kTA8WLRSi3mdTZn1", "GqcBEpoNy6ukqV1h2ftSWhhC3QoU2CQqJafILwOe");
+
+////////////////////Save Data////////////////////////
+		//Simple syntax to create a new subclass of Parse.Object.
+		var GameScore = Parse.Object.extend("GameScore");
+		 // Create a new instance of that class.
+		var gameScore = new GameScore();
+
+		gameScore.set("score", 1337);
+		gameScore.set("playerName", "Sean Plott");
+		gameScore.set("cheatMode", false);
+
+		gameScore.save(null, {
+		  success: function(gameScore) {
+		    // Execute any logic that should take place after the object is saved.
+		    alert('New object created with objectId: ' + gameScore.id);
+		  },
+		  error: function(gameScore, error) {
+		    // Execute any logic that should take place if the save fails.
+		    // error is a Parse.Error with an error code and description.
+		    alert('Failed to create new object, with error code: ' + error.description);
+		  }
+		});
+////////////////////End Save Data////////////////////////
+
+//////////////////Get Data////////////////////////
+		// var GameScore = Parse.Object.extend("GameScore");
+		// var query = new Parse.Query(GameScore);
+		// query.get("GnvGLU824E", {
+		//   success: function(gameScore) {
+		//     // The object was retrieved successfully.
+		//     var score = gameScore.get("score");
+		// 	var playerName = gameScore.get("playerName");
+		// 	var cheatMode = gameScore.get("cheatMode");
+		// 	// The three special values are provided as properties:
+		// 	var objectId = gameScore.id;
+		// 	var updatedAt = gameScore.updatedAt;
+		// 	var createdAt = gameScore.createdAt
+
+		// 	console.log(playerName);
+		//   },
+		//   error: function(object, error) {
+		//     // The object was not retrieved successfully.
+		//     // error is a Parse.Error with an error code and description.
+		//   }
+//////////////////End Get Data////////////////////////
+
+//////////////////Updating an object////////////////////////
+	// 	//Create the object.
+	// 	var GameScore = Parse.Object.extend("GameScore");
+	// 	var gameScore = new GameScore();
+
+	// 	gameScore.set("score", 1337);
+	// 	gameScore.set("playerName", "Sean Plott");
+	// 	gameScore.set("cheatMode", false);
+	// 	gameScore.set("skills", ["pwnage", "flying"]);
+	// 	///Put new info to arrey again//
+	// 	gameScore.addUnique("skills", "kungfu");
+
+	// 	gameScore.save(null, {
+	// 	  success: function(gameScore) {
+	// 	    // Now let's update it with some new data. In this case, only cheatMode and score
+	// 	    // will get sent to the cloud. playerName hasn't changed.
+	// 	    gameScore.set("cheatMode", true);
+	// 	    gameScore.set("score", 1338);
+
+	// 	    gameScore.save();
+	// 	  }
+	// });
+
+//////////////////End Updating an object////////////////////////
+
+//////////////////Rerational Data////////////////////////
+	// Declare the types.
+	// var Post = Parse.Object.extend("Post");
+	// var Comment = Parse.Object.extend("Comment");
+
+	// Create the post
+	// var myPost = new Post();
+	// myPost.set("title", "I'm Hungry");
+	// myPost.set("content", "Where should we go for lunch?");
+
+	// Create the comment
+	// var myComment = new Comment();
+	// myComment.set("content", "Let's do Sushirrito.");
+
+	// Add the post as a value in the comment
+	// myComment.set("parent", myPost);
+
+	// This will save both myPost and myComment
+	// myComment.save(
+	// 	null,{
+	// 	success: function(myComment){
+	// 		alert('New object created with objectId: ' + myComment.id);
+	// 	},
+	// 	error: function(myComment, error) {
+	// 	    // Execute any logic that should take place if the save fails.
+	// 	    // error is a Parse.Error with an error code and description.
+	// 	    alert('Failed to create new object, with error code: ' + error.description);
+	// 	  }
+	// }
+	// );
+//////////////////End Rerational Data////////////////////////
+
+	});
+	</script>
+</head>
+<body>
+
+</body>
+</html>
